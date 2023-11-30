@@ -1,0 +1,133 @@
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
+
+class Task {
+    private String description;
+    private Date dueDate;
+    private int priority;
+
+    public Task(String description, Date dueDate, int priority) {
+        this.description = description;
+        this.dueDate = dueDate;
+        this.priority = priority;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public Date getDueDate() {
+        return dueDate;
+    }
+
+    public int getPriority() {
+        return priority;
+    }
+}
+
+class TaskManager {
+    private List<Task> tasks;
+
+    public TaskManager() {
+        this.tasks = new ArrayList<>();
+    }
+
+    public void addTask(Task task) {
+        tasks.add(task);
+        scheduleTask(task);
+    }
+
+    public void removeTask(Task task) {
+        tasks.remove(task);
+    }
+
+    public List<Task> getTasks() {
+        return tasks;
+    }
+
+    private void scheduleTask(Task task) {
+        Timer timer = new Timer();
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                System.out.println("Task Due: " + task.getDescription());
+                // Add notification logic here
+            }
+        }, task.getDueDate());
+    }
+}
+
+public class TaskSchedulerApp {
+    public static void main(String[] args) {
+        TaskManager taskManager = new TaskManager();
+        Scanner scanner = new Scanner(System.in);
+
+        while (true) {
+            System.out.println("\nTask Scheduler Menu:");
+            System.out.println("1. Add Task");
+            System.out.println("2. View Tasks");
+            System.out.println("3. Exit");
+            System.out.print("Choose an option: ");
+
+            int choice = scanner.nextInt();
+            scanner.nextLine(); // Consume the newline character
+
+            switch (choice) {
+                case 1:
+                    addTask(scanner, taskManager);
+                    break;
+                case 2:
+                    viewTasks(taskManager);
+                    break;
+                case 3:
+                    System.out.println("Exiting Task Scheduler. Goodbye!");
+                    System.exit(0);
+                default:
+                    System.out.println("Invalid option. Please try again.");
+            }
+        }
+    }
+
+    private static void addTask(Scanner scanner, TaskManager taskManager) {
+        System.out.print("Enter task description: ");
+        String description = scanner.nextLine();
+
+        System.out.print("Enter due date (yyyy-MM-dd HH:mm): ");
+        String dueDateString = scanner.nextLine();
+        Date dueDate = parseDate(dueDateString);
+
+        System.out.print("Enter priority level: ");
+        int priority = scanner.nextInt();
+
+        Task task = new Task(description, dueDate, priority);
+        taskManager.addTask(task);
+
+        System.out.println("Task added successfully!");
+    }
+
+    private static void viewTasks(TaskManager taskManager) {
+        List<Task> tasks = taskManager.getTasks();
+
+        if (tasks.isEmpty()) {
+            System.out.println("No tasks available.");
+        } else {
+            System.out.println("\nTasks:");
+            for (Task task : tasks) {
+                System.out.println("Description: " + task.getDescription());
+                System.out.println("Due Date: " + task.getDueDate());
+                System.out.println("Priority: " + task.getPriority());
+                System.out.println("--------------");
+            }
+        }
+    }
+
+    private static Date parseDate(String dateString) {
+        try {
+            return new SimpleDateFormat("yyyy-MM-dd HH:mm").parse(dateString);
+        } catch (ParseException e) {
+            System.out.println("Invalid date format. Please use yyyy-MM-dd HH:mm.");
+            return null;
+        }
+    }
+}
