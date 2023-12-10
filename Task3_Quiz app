@@ -1,0 +1,81 @@
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+
+class Question {
+    private String text;
+    private List<String> options;
+    private int correctOption;
+
+    public Question(String text, List<String> options, int correctOption) {
+        this.text = text;
+        this.options = options;
+        this.correctOption = correctOption;
+    }
+
+    public boolean isCorrect(int userAnswer) {
+        return userAnswer == correctOption;
+    }
+
+    public void displayQuestion() {
+        System.out.println(text);
+        for (int i = 0; i < options.size(); i++) {
+            System.out.println((i + 1) + ". " + options.get(i));
+        }
+    }
+}
+
+class Quiz {
+    private List<Question> questions;
+
+    public Quiz() {
+        this.questions = new ArrayList<>();
+    }
+
+    public void addQuestion(Question question) {
+        questions.add(question);
+    }
+
+    public void takeQuiz() {
+        Scanner scanner = new Scanner(System.in);
+        int score = 0;
+
+        for (int i = 0; i < questions.size(); i++) {
+            Question currentQuestion = questions.get(i);
+
+            System.out.println("Question " + (i + 1) + ":");
+            currentQuestion.displayQuestion();
+
+            System.out.print("Your answer: ");
+            int userAnswer = scanner.nextInt();
+
+            if (currentQuestion.isCorrect(userAnswer)) {
+                System.out.println("Correct!\n");
+                score++;
+            } else {
+                System.out.println("Incorrect. The correct answer is: " + currentQuestion.getCorrectOption());
+                System.out.println();
+            }
+        }
+
+        System.out.println("Quiz completed. Your score: " + score + "/" + questions.size());
+    }
+}
+
+public class QuizApp {
+    public static void main(String[] args) {
+        Quiz quiz = new Quiz();
+
+        // Create and add questions to the quiz
+        Question question1 = new Question("What is the capital of France?", List.of("Berlin", "Paris", "London"), 2);
+        Question question2 = new Question("Which programming language is this code written in?", List.of("Java", "Python", "C++"), 1);
+        Question question3 = new Question("Is the Earth flat?", List.of("True", "False"), 2);
+
+        quiz.addQuestion(question1);
+        quiz.addQuestion(question2);
+        quiz.addQuestion(question3);
+
+        // Allow the user to take the quiz
+        quiz.takeQuiz();
+    }
+}
